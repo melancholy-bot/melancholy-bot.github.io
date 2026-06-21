@@ -1,0 +1,179 @@
+/* =============================================================
+ * Frenet Lab — style.css
+ * 디자인 방향: "정밀 과학 계측기".
+ *  - 깊은 네이비-블랙 배경 위에서 TNB 세 벡터의 색이 곧 범례가 된다.
+ *  - 수치/수식은 모노스페이스로, 라벨은 산세리프로.
+ * ============================================================= */
+:root {
+  --bg:      #090d15;
+  --panel:   #111824;
+  --panel-2: #0c121b;
+  --inset:   #0a0f18;
+  --line:    #1e2735;
+  --text:    #e7edf5;
+  --muted:   #8a94a6;
+  --dim:     #5c6678;
+
+  --T: #ff6f5e;  /* 접선 Tangent  — coral  */
+  --N: #37d597;  /* 주법선 Normal  — green  */
+  --B: #5b9cff;  /* 종법선 Binormal— blue   */
+  --accent: #f4c45d; /* 현재 위치 표시 — amber */
+
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.dim  { color: var(--dim); }
+.cT { color: var(--T); } .cN { color: var(--N); } .cB { color: var(--B); }
+
+/* ---------- 상단 바 ---------- */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 14px 22px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #0d141e, #0a0f17);
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand .mark {
+  font-size: 30px; line-height: 1; color: var(--accent);
+  text-shadow: 0 0 18px rgba(244,196,93,.35);
+}
+.brand h1 {
+  margin: 0; font-size: 19px; letter-spacing: .12em;
+  font-weight: 600; text-transform: uppercase;
+}
+.brand p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+.formula { display: flex; gap: 18px; font-size: 13px; color: var(--muted); }
+.formula .mono, .formula span { font-family: var(--mono); }
+.formula b { font-weight: 700; }
+
+/* ---------- 레이아웃 ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "viewport panel"
+    "graphs   panel";
+  gap: 1px;
+  height: calc(100vh - 64px);
+  background: var(--line);
+}
+.viewport { grid-area: viewport; position: relative; background: var(--bg); min-height: 0; }
+.panel    { grid-area: panel;    background: var(--panel); overflow-y: auto; }
+.graphs   { grid-area: graphs;   background: var(--panel-2); }
+
+/* ---------- 뷰포트 ---------- */
+#stage { position: absolute; inset: 0; }
+#stage canvas { display: block; }
+.legend {
+  position: absolute; left: 16px; top: 14px;
+  display: flex; flex-direction: column; gap: 7px;
+  font-size: 12.5px; color: var(--text);
+  background: rgba(9,13,21,.6); backdrop-filter: blur(6px);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 11px 13px; pointer-events: none;
+}
+.legend span { display: flex; align-items: center; gap: 8px; }
+.legend i { width: 16px; height: 3px; border-radius: 2px; display: inline-block; }
+.legend i.ring {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: transparent; border: 1.5px dashed var(--accent);
+}
+.hint {
+  position: absolute; right: 14px; bottom: 12px;
+  font-size: 11.5px; color: var(--dim);
+  pointer-events: none; letter-spacing: .02em;
+}
+
+/* ---------- 제어판 ---------- */
+.block { padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.block-title {
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 11px; font-weight: 600;
+}
+.presets { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.preset {
+  font: inherit; font-size: 12.5px; text-align: left;
+  padding: 9px 11px; cursor: pointer; color: var(--text);
+  background: var(--inset); border: 1px solid var(--line);
+  border-radius: 8px; transition: .15s;
+}
+.preset:hover { border-color: var(--dim); }
+.preset.active { border-color: var(--accent); color: var(--accent); background: #14110a; }
+
+.expr-grid {
+  display: grid; grid-template-columns: auto 1fr; gap: 8px 10px;
+  align-items: center;
+}
+.expr-grid label { font-size: 12.5px; color: var(--muted); }
+.expr-grid input, .range-row input {
+  width: 100%; background: var(--inset); color: var(--text);
+  border: 1px solid var(--line); border-radius: 7px;
+  padding: 7px 9px; font-size: 13px;
+}
+.expr-grid input:focus, .range-row input:focus {
+  outline: none; border-color: var(--accent);
+}
+.range-row { display: flex; align-items: center; gap: 7px; }
+.range-row span { color: var(--muted); }
+
+.btn {
+  font: inherit; font-size: 13px; cursor: pointer; color: var(--text);
+  background: var(--inset); border: 1px solid var(--line);
+  border-radius: 8px; padding: 9px 14px; transition: .15s;
+}
+.btn:hover { border-color: var(--dim); }
+.btn.primary {
+  width: 100%; margin-top: 12px; color: #0a0f17; font-weight: 600;
+  background: var(--accent); border-color: var(--accent);
+}
+.btn.primary:hover { filter: brightness(1.06); }
+.err { color: var(--T); font-size: 12px; margin-top: 9px; min-height: 1em; }
+
+.play-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+#play { min-width: 86px; }
+.speed { font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.t-row { display: block; font-size: 12px; color: var(--muted); }
+.t-row .mono { color: var(--accent); float: right; }
+input[type="range"] { width: 100%; accent-color: var(--accent); margin-top: 6px; }
+.toggles { display: flex; gap: 14px; margin-top: 12px; font-size: 12.5px; color: var(--muted); }
+.toggles label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+
+.readout dl {
+  display: grid; grid-template-columns: 1fr auto; gap: 9px 12px; margin: 0;
+}
+.readout dt { font-size: 12.5px; color: var(--muted); }
+.readout dd { margin: 0; font-size: 14px; text-align: right; color: var(--text); }
+
+/* ---------- 그래프 ---------- */
+.graphs { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); }
+.graphs figure { margin: 0; padding: 10px 14px; background: var(--panel-2); }
+.graphs figcaption {
+  font-size: 12px; color: var(--muted); margin-bottom: 6px; font-family: var(--mono);
+}
+.graphs canvas { width: 100%; height: auto; display: block; }
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 880px) {
+  .topbar { flex-wrap: wrap; gap: 8px; }
+  .formula { display: none; }
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 56vh auto auto;
+    grid-template-areas: "viewport" "panel" "graphs";
+    height: auto;
+  }
+  .panel { max-height: none; }
+}
