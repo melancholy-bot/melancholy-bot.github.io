@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frenet Lab · 공간곡선과 TNB 틀</title>
+  <meta name="description" content="공간곡선 r(t)의 접선·법선·종법선(TNB) 틀과 곡률·비틀림을 실시간으로 시각화하는 미분기하 실험실." />
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- 외부 라이브러리 (CDN): 식 파서 math.js, 3D 렌더 three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark">∮</span>
+      <div>
+        <h1>Frenet&nbsp;Lab</h1>
+        <p>공간곡선 <span class="mono">r(t)</span> · TNB 틀 · 곡률 &amp; 비틀림</p>
+      </div>
+    </div>
+    <div class="formula" aria-hidden="true">
+      <span><b class="cT">T</b>=r′/|r′|</span>
+      <span><b class="cN">N</b>=B×T</span>
+      <span><b class="cB">B</b>=r′×r″/|r′×r″|</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- 3D 뷰포트 (히어로) -->
+    <section class="viewport" aria-label="3차원 곡선 뷰">
+      <div id="stage"></div>
+      <div class="legend">
+        <span><i style="background:var(--T)"></i> T 접선</span>
+        <span><i style="background:var(--N)"></i> N 주법선</span>
+        <span><i style="background:var(--B)"></i> B 종법선</span>
+        <span><i class="ring"></i> 접촉원</span>
+      </div>
+      <div class="hint">드래그 회전 · 휠 확대/축소</div>
+    </section>
+
+    <!-- 제어판 -->
+    <aside class="panel" aria-label="제어판">
+      <div class="block">
+        <div class="block-title">곡선 선택</div>
+        <div id="presets" class="presets"></div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">직접 입력 <span class="mono dim">변수는 t</span></div>
+        <div class="expr-grid">
+          <label>x(t)</label><input id="ex" class="mono" value="2*cos(t)" />
+          <label>y(t)</label><input id="ey" class="mono" value="2*sin(t)" />
+          <label>z(t)</label><input id="ez" class="mono" value="0.5*t" />
+          <label>t 범위</label>
+          <div class="range-row">
+            <input id="tmin" class="mono" value="0" />
+            <span>~</span>
+            <input id="tmax" class="mono" value="6*pi" />
+          </div>
+        </div>
+        <button id="draw" class="btn primary">그리기</button>
+        <div id="err" class="err" role="alert"></div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">애니메이션</div>
+        <div class="play-row">
+          <button id="play" class="btn">▶ 재생</button>
+          <label class="speed">속도
+            <input id="speed" type="range" min="0.1" max="3" step="0.1" value="1" />
+          </label>
+        </div>
+        <label class="t-row">위치 <span id="tval" class="mono">t=0.00</span>
+          <input id="tslider" type="range" min="0" max="1000" value="0" />
+        </label>
+        <div class="toggles">
+          <label><input type="checkbox" id="tgFrame" checked /> TNB 틀</label>
+          <label><input type="checkbox" id="tgCircle" checked /> 접촉원</label>
+          <label><input type="checkbox" id="tgTrail" checked /> 곡선</label>
+        </div>
+      </div>
+
+      <div class="block readout">
+        <div class="block-title">현재 점에서의 측정값</div>
+        <dl>
+          <dt>속력 |r′(t)|</dt><dd id="rSpeed" class="mono">–</dd>
+          <dt>곡률 κ</dt><dd id="rKappa" class="mono">–</dd>
+          <dt>곡률반지름 1/κ</dt><dd id="rRad" class="mono">–</dd>
+          <dt>비틀림 τ</dt><dd id="rTau" class="mono">–</dd>
+        </dl>
+      </div>
+    </aside>
+
+    <!-- 곡률 / 비틀림 그래프 -->
+    <section class="graphs" aria-label="곡률과 비틀림 그래프">
+      <figure>
+        <figcaption><b class="cN">κ(t)</b> 곡률</figcaption>
+        <canvas id="gKappa" width="600" height="150"></canvas>
+      </figure>
+      <figure>
+        <figcaption><b class="cB">τ(t)</b> 비틀림</figcaption>
+        <canvas id="gTau" width="600" height="150"></canvas>
+      </figure>
+    </section>
+  </main>
+
+  <script src="js/math-utils.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
